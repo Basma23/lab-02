@@ -1,0 +1,37 @@
+*{
+    font-family: 'Cardo', sans-serif;
+}
+header{
+    height: 80px;
+    width: 100%;
+    background-color: #000000;
+    box-shadow: 2px 2px 5px #000;
+    opacity: .8;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+select{
+    color: #f5f5f5;
+    margin: 50px 632px;
+    width: 200px;
+    height: 35px;
+    font-size: 15px;
+    background-color: #000000;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px #000;
+}
+main{
+    padding: 50px;
+    min-height: 2800px;
+}
+footer{
+    background-color: #000000;
+    box-shadow: 2px 2px 5px #000;
+    color: #f5f5f5;
+    height: 80px;
+    width: 100%;
+    opacity: .8;
+    text-align: center;
+}
