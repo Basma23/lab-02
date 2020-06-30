@@ -42,7 +42,9 @@ $.ajax('./data/page-1.json')
     $('select').change(event =>{
         $('section').each(function(){
             $(this).show();
-            if($(this).attr('id') !== event.target.value){
+            if(event.target.value == 'default'){
+                $(this).show();
+            }else if($(this).attr('id') !== event.target.value){
                 $(this).hide();
             }if($(this).attr('class') === event.target.value){
                 $(this).toggle();
