@@ -12,6 +12,13 @@
   <link rel="stylesheet" href="css/modules.css">
   <link rel="stylesheet" href="css/reset.css">
   <!-- <link rel="stylesheet" href="css/style.css"> -->
+  <script id='template' type="text/x-tmpl-mustache">
+      <section class="info">
+        <h2>{{title}}</h2>
+        <img src="{{url}}" alt="">
+        <p>{{description}}</p>
+      </section>
+</script>
 </head>
 
 <body>
@@ -19,9 +26,16 @@
     <h1>The Gallery of Horns</h1>
   </header>
   <main>
-    <select>
+    <select id="select">
       <option value="default">Filter by Keyword</option>
     </select>
+    <select id="select1">
+      <option>Sort by</option>
+      <option value="tit">Title</option>
+      <option value="num">#Of Horns</option>
+    </select>
+    <button id="firstPage">First Page</button>
+    <button id="secondPage">Second Page</button>
     <section id="photo-template">
       <h2></h2>
       <img src="" alt="">
@@ -31,6 +45,7 @@
   <footer>
     <p>&copy; 2018 Code Fellows</p>
   </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.0.1/mustache.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script src="js/app.js"></script>
 </body>
