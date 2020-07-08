@@ -1,8 +1,10 @@
 'use strict';
 let imgs = [];
 let keywords = [];
+let butt = true;
+let butt1 = false;
 
-function Img(image_url, title, description, keyword, horns) {
+function Img(image_url, title, description, keyword, horns){
     this.url = image_url;
     this.title = title;
     this.description = description;
@@ -11,150 +13,148 @@ function Img(image_url, title, description, keyword, horns) {
     imgs.push(this);
 };
 
-
-$.ajax(`./data/page-1.json`).then(data => {
-    data.forEach(value => {
-        new Img(value.image_url, value.title, value.description, value.keyword, value.horns);
-        galleryRender();
-    });
-    keywords.forEach(keyword => {
-        let options = $('option');
-        let cloneOptions = options.clone();
-        cloneOptions.attr('value', keyword);
-        cloneOptions.text(keyword);
-        $('select').append(cloneOptions[0]);
-    });
+//lab-02
+// $.ajax('./data/page-1.json')
+// .then(data =>{
+//     data.forEach(value =>{
+//         new Img(value.image_url, value.title, value.description, value.keyword, value.horns);
+//     })
     
-    $('#select').change(event => {
-        $('section').each(function () {
-            $(this).show();
-            if (event.target.value == 'default') {
-                $(this).show();
-            } else if ($(this).attr('id') !== event.target.value) {
-                $(this).hide();
-            } if ($(this).attr('class') === event.target.value) {
-                $(this).toggle();
-            }
-        });
-    });
-});
-
-$.ajax(`./data/page-2.json`).then(data => {
-    data.forEach(value => {
-        new Img(value.image_url, value.title, value.description, value.keyword, value.horns);
-        galleryRender();
-    });
-    keywords.forEach(keyword => {
-        let options = $('option');
-        let cloneOptions = options.clone();
-        cloneOptions.attr('value', keyword);
-        cloneOptions.text(keyword);
-        $('select').append(cloneOptions[0]);
-    });
+//     imgs.forEach(img =>{
+//         let photos = $('section');
+//         let clonePhotos = photos.clone();
+//         clonePhotos.attr('id', `${img.keyword}`);
+//         clonePhotos.attr('class', 'info');
+//         clonePhotos.children('h2').text(img.title);
+//         clonePhotos.children('img').attr('src', `${img.url}`);
+//         clonePhotos.children('p').text(img.description);
+//         $('main').append(clonePhotos[0]);
+//         if(!keywords.includes(img.keyword)) {
+//             keywords.push(img.keyword);
+//         }
+//     });
     
-    $('#select').change(event => {
-        $('section').each(function () {
-            $(this).show();
-            if (event.target.value == 'default') {
-                $(this).show();
-            } else if ($(this).attr('id') !== event.target.value) {
-                $(this).hide();
-            } if ($(this).attr('class') === event.target.value) {
-                $(this).toggle();
-            }
+//     keywords.forEach(keyword =>{
+//         let options = $('option');
+//         let cloneOptions = options.clone();
+//         cloneOptions.attr('value', keyword);
+//         cloneOptions.text(keyword);
+//         $('select').append(cloneOptions[0]);
+//     });
+    
+//     $('select').change(event =>{
+//         $('section').each(function(){
+//             $(this).show();
+//             if(event.target.value == 'default'){
+//                 $(this).show();
+//             }else if($(this).attr('id') !== event.target.value){
+//                 $(this).hide();
+//             }if($(this).attr('class') === event.target.value){
+//                 $(this).toggle();
+//             }
+//         });
+//     });
+// });
+
+//lab-03
+function gallery(num){
+    $.ajax(`./data/page-${num}.json`).then(data =>{
+        data.forEach(value =>{
+            let newGallery = new Img(value.image_url, value.title, value.description, value.keyword, value.horns);
+            newGallery.galleryRender();
+            newGallery.galleryFilter();
         });
-    });
-});
+    })
+};
+gallery(1);
 
-function galleryRender() {
-    $('#photo-template').html('');
-    imgs.forEach(items => {
-        $('#photo-template').append(Mustache.render($('#template').html(), items))
-    });
-    // keywords.forEach(keys => {
-    //     $('#select').append(Mustache.render(`<option value="${keyword}">${keyword}</option>`.html(), keys))
-    //     console.log(keywords);
-
-    // });
+Img.prototype.galleryRender = function(){
+    let temp = $('#template').html();
+    let newObj = Mustache.render(temp, this);
+    $('#photo-template').append(newObj);
 }
 
-
-
-$('button').on('click', (event) => {
-    if (event.target.id === '#firstPage') {
-        $.ajax(`./data/page-1.json`).then(data => {
-            data.forEach(value => {
-                new Img(value.image_url, value.title, value.description, value.keyword, value.horns, i);
-                galleryRender();
-            });
-        });
+Img.prototype.galleryFilter = function(){
+    if(keywords.includes(this.keyword) === false){
+        let options = $('<option></option>').text(this.keyword);
+        options.attr('value', this.keyword);
+        $('#select').append(options);
+        keywords.push(this.keyword);
     }
-    if (event.target.id === '#secondPage') {
-        $.ajax(`./data/page-2.json`).then(data => {
-            data.forEach(value => {
-                new Img(value.image_url, value.title, value.description, value.keyword, value.horns, i);
-                galleryRender();
-            });
-        });
+}
+$('#select').on("change", function (event) {
+    $("#photo-template").empty();
+    if(event.target.value === 'default'){
+        gallery(1);
     }
+    let choosed = $(this).val();
+    if (choosed === 'Filter by Keyword') {
+        if (gallery(1)) {
+            $("#photo-template").empty();
+        } else if (gallery(2)) {
+            $("#photo-template").empty();
+            $('#secondPage').trigger('click');
+        }
+    }
+    imgs.forEach(item => {
+        let category = item.keyword;
+        if (choosed === category) {
+            let musTemplate = $('#template').html();
+            let newObj = Mustache.render(musTemplate, item);
+            $('#photo-template').append(newObj);
+        }
+    })
 });
 
-$('#select1').change(function (event) {
-    if (event.target.value === 'tit') {
+$('#select1').change(function () {
+    $("#photo-template").empty();
+    let sorted = $(this).val();
+
+    if (sorted === 'tit') {
         imgs.sort((a, b) => {
-            if (a.title < b.title) {
-                return -1;
-            }
             if (a.title > b.title) {
                 return 1;
             }
-            return 0;
+            else if (a.title < b.title) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+
         });
+
     };
-    if (event.target.value === 'num') {
+    if (sorted === 'num') {
         imgs.sort((a, b) => {
-            return a.horns - b.horns;
+            if (a.horns > b.horns) {
+                return 1;
+            }
+            else if (a.horns < b.horns) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+
         });
+
     }
+    imgs.forEach(item => {
+        let musTemplate = $('#template').html();
+         let newObj = Mustache.render(musTemplate, item);
+         $('#photo-template').append(newObj);
+    });
+})
+
+
+$('#firstPage').on('click', () =>{
+    $('#photo-template').empty();
+    gallery(1);
 });
 
-
-// imgs.forEach(img =>{
-//     let photos = $('section');
-//     let clonePhotos = photos.clone();
-//     clonePhotos.attr('id', `${img.keyword}`);
-//     clonePhotos.attr('class', 'info');
-//     clonePhotos.children('h2').text(img.title);
-//     clonePhotos.children('img').attr('src', `${img.url}`);
-//     clonePhotos.children('p').text(img.description);
-//     $('main').append(clonePhotos[0]);
-//     if(!keywords.includes(img.keyword)) {
-//         keywords.push(img.keyword);
-//     }
-// });
-
-// keywords.forEach(keyword => {
-//     let options = $('option');
-//     let cloneOptions = options.clone();
-//     cloneOptions.attr('value', keyword);
-//     cloneOptions.text(keyword);
-//     $('select').append(cloneOptions[0]);
-// });
-
-// $('#select').change(event => {
-//     $('section').each(function () {
-//         $(this).show();
-//         if (event.target.value == 'default') {
-//             $(this).show();
-//         } else if ($(this).attr('id') !== event.target.value) {
-//             $(this).hide();
-//         } if ($(this).attr('class') === event.target.value) {
-//             $(this).toggle();
-//         }
-//     });
-// });
-// });
-
-
-
+$('#secondPage').on('click', () =>{
+    $('#photo-template').empty();
+    gallery(2);
+});
 
